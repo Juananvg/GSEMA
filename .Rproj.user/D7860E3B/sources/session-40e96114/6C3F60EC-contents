@@ -1,0 +1,14 @@
+Package: GSEMA
+Type: Package
+Title: Gene Set Enrichment Meta-Analysis
+Version: 0.99.0
+Authors@R: c(person("Juan Antonio", "Villatoro-García", role = c("aut", "cre"), email = "juanantoniovillatorogarcia@gmail.com"), person("Pedro", "Carmona-Sáez", role = "aut"))
+Description: performing the different steps of gene set enrichment meta-analysis. It provides different functions that allow the application of meta-analysis based on the combination of effect sizes from different pathways in different studies to obtain significant pathways that are common to all of them.
+License: GPL-2
+Depends: R (>= 4.3)
+Suggests: BiocStyle, qpdf, BiocGenerics, RUnit
+Imports: Biobase, DExMA, DExMAdata, NOISeq, limma, edgeR, singscore, GSVA, progress, pbapply, doParallel, parallel, BiocParallel, metafor, BiocGenerics, RColorBrewer, pheatmap, methods, scales, plyr, grDevices, stats
+biocViews: DifferentialExpression, GeneExpression, StatisticalMethod, QualityControl
+Encoding: UTF-8
+LazyData: false
+RoxygenNote: 7.3.1

@@ -1,0 +1,39 @@
+
+listMatrices <- list(study1Ex, study2Ex, study3Ex, study4Ex, study5Ex)
+listPhenodata <- list(study1Pheno, study2Pheno, study3Pheno, study4Pheno, study5Pheno)
+phenoGroups <- c("Condition","Condition", "Condition", "Condition", "Condition")
+phenoCases <- list("Case", "Case", "Case", "Case", "Case")
+phenoControls <- list("Healthy", "Healthy", "Healthy", "Healthy", "Healthy")
+ObjectMApath_sim <- createObjectMApath(
+    listEX = listMatrices,
+    listPheno = listPhenodata, namePheno = phenoGroups,
+    expGroups = phenoCases, refGroups = phenoControls,
+    geneSets = GeneSets,
+    pathMethod = "Singscore", n_cores = 5)
+
+ObjectMApath_sim <- filteringPaths(ObjectMApath_sim, threshold = 0.1)
+res <- metaAnalysisESpath(ObjectMApath_sim, typeMethod = "REM", WithinVarCorrect = TRUE)
+heat <- heatmapPaths(ObjectMApath_sim, resMA = res, scaling = "swr", comES_Sig = 1.5, numSig = 50)
+
+
+library(ggplot2)
+
+prueba <- ggplot(data=res, aes(x=Com.ES, y=-log2(FDR))) + geom_point() +  theme_minimal()
+prueba2 <- prueba + geom_vline(xintercept=c(-0.6, 0.6), col="red") +
+    geom_hline(yintercept=-log10(0.05), col="red")
+res$diffexpressed <- "NO"
+# if log2Foldchange > 0.6 and pvalue < 0.05, set as "UP" 
+res$diffexpressed[res$Com.ES > 5 & res$FDR < 0.05] <- "UP"
+# if log2Foldchange < -0.6 and pvalue < 0.05, set as "DOWN"
+res$diffexpressed[res$Com.ES < -5 & res$FDR < 0.05] <- "DOWN"
+prueba3 <- prueba2 + scale_color_manual(values=c("blue", "black", "red"))
+
+
+
+res$delabel <- NA
+res$delabel[res$diffexpressed != "NO"] <- res$Pathway[res$diffexpressed != "NO"]
+
+ggplot(data=res, aes(x=Com.ES, y=-log10(FDR+0.00001), col=diffexpressed, label=delabel)) + 
+    geom_point() + 
+    theme_minimal() +
+    geom_text()

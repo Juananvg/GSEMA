@@ -1,0 +1,163 @@
+#' Creation of the object previous to pathway MEta-analysis object
+#'
+#' It allows the creation of an object to perform meta-analysis.
+#'
+#' @param objectExMA The object returned by the createObjectExMA (function).
+#' A list of list. Each list contains two elements. The first
+#' element is the expression matrix (genes in rows and sample in columns) and
+#' the second element is a vector of zeros and ones that represents the state
+#' of the different samples of the expression matrix. 0 represents one group
+#' (controls) and 1 represents the other group (cases).
+#'
+#' @param genesets 	List of gene sets to check. Object similar 
+#' to the one used in the fgsea package
+#'
+#' @param pathMethod Method used to obtain the enrichment score of each 
+#' sample and pathway. See details for more information
+#'
+#' @param  minSize 	Minimum size of the resulting gene sets after gene 
+#' identifier mapping. By default, the minimum size is 7.
+#'
+#' @param kdcf Only neccesary for the GSVA method. Character vector of length 1 
+#' denoting the kernel to use during the non-parametric estimation of the 
+#' cumulative distribution function of expression levels across samples. 
+#' By default, kcdf="Gaussian" which is suitable when input expression values 
+#' are continuous, such as microarray fluorescent units in logarithmic scale, 
+#' RNA-seq log-CPMs, log-RPKMs or log-TPMs. When input expression values are 
+#' integer counts, such as those derived from RNA-seq experiments, then this 
+#' argument should be set to kcdf="Poisson".
+#'
+#' @return The object needed to perform pathway enrichment meta-analysis. 
+#' Each list contains  two elements: The first element is the pathway matrix 
+#' (pathway in rows 
+#' and sample in columns) The second element is a vector of zeros and ones 
+#' that represents the state of the diffenrent samples of the pathway 
+#' matrix. 0 represents reference group (controls) and 1 represents 
+#' experimental group (cases).
+#'
+#' @author Juan Antonio Villatoro Garcia,
+#' \email{juanantoniovillatorogarcia@@gmail.com}
+#'
+#' @seealso \code{\link{elementobjectExMA}}
+#'
+#' @examples
+#' 
+
+#' @export
+
+
+objectExMA.to.objectMApath <- function(objectExMA, geneSets,
+    pathMethod = c("GSVA", "Zscore", "ssGSEA", "Singscore"), minSize = 7, 
+    kcdf = "Gaussian", n_cores = 1, internal_n_cores = 1){
+    pathMethod <- match.arg(pathMethod)
+    if(pathMethod == "GSVA"){
+        print("Applying the GSVA method")
+        objectMApath <- mclapply(objectExMA, function(x){ 
+            x[[1]] <- .applyGSVA(x[[1]], geneSets = geneSets, 
+                minSize = minSize, kcdf = kcdf, internal_n_cores = internal_n_cores)
+            x[[2]] <- x[[2]]
+            names(x) <- c("mPath", "condition")
+            return(x)},
+            mc.cores = n_cores
+        )
+        names(objectMApath) <- names(objectExMA)
+    }
+    if(pathMethod == "ssGSEA"){
+        print("Applying the ssGSEA method")
+        objectMApath <- mclapply(objectExMA, function(x){
+            x[[1]] <- .applyssGSEA(x[[1]], geneSets = geneSets, minSize = minSize, 
+                internal_n_cores = internal_n_cores)
+            x[[2]] <- x[[2]]
+            names(x) <- c("mPath", "condition")
+            return(x)},
+            mc.cores = n_cores
+        )
+        names(objectMApath) <- names(objectExMA)
+    }
+    if(pathMethod == "Zscore"){
+        print("Applying the Zscore method")
+        objectMApath <- mclapply(objectExMA, function(x) {
+            x[[1]] <- .applyZscore(x[[1]], geneSets = geneSets, minSize = minSize, 
+                internal_n_cores = internal_n_cores)
+            x[[2]] <- x[[2]]
+            names(x) <- c("mPath", "condition")
+            return(x)},
+            mc.cores = n_cores
+        )
+        names(objectMApath) <- names(objectExMA)
+    }
+    if(pathMethod == "Singscore"){
+        print("Applying the singscore method")
+        objectMApath <- mclapply(objectExMA, function(x) {
+            x[[1]] <- .applySingscore(x[[1]], geneSets = geneSets, minSize = minSize)
+            x[[2]] <- x[[2]]
+            names(x) <- c("mPath", "condition")
+            return(x)},
+            mc.cores = n_cores
+        )
+        names(objectMApath) <- names(objectExMA)
+    }
+    return(objectMApath)
+}
+
+
+
+#GSVA
+.applyGSVA <- function(exMatrix, geneSets, minSize = 7, kcdf = "Gaussian", internal_n_cores = 1){
+    paramMatrix <- gsvaParam(exMatrix, geneSets, minSize =  minSize, kcdf = kcdf)
+    gsvaMatrix <- gsva(paramMatrix, BPPARAM = MulticoreParam(workers = internal_n_cores))
+    return(gsvaMatrix)
+}
+
+#Zscore
+.applyZscore <- function(exMatrix, geneSets, minSize = 7, internal_n_cores = 1){
+    paramMatrix <- zscoreParam(exMatrix, geneSets, minSize =  minSize)
+    ZscoreMatrix <- gsva(paramMatrix, BPPARAM = MulticoreParam(workers = internal_n_cores))
+    #Scale data between -1 and 1
+    #ZscoreMatrix <- ZscoreMatrix / max(abs(ZscoreMatrix))
+    return(ZscoreMatrix)
+}
+
+#ssGSEA
+.applyssGSEA <- function(exMatrix, geneSets, minSize = 7, internal_n_cores = 1){
+    paramMatrix <- ssgseaParam(exMatrix, geneSets, minSize =  minSize)
+    ssGSEAMatrix <- gsva(paramMatrix, BPPARAM = MulticoreParam(workers = internal_n_cores))
+    #Scale data between -1 and 1
+    #ssGSEAMatrix <- ssGSEAMatrix / max(abs(ssGSEAMatrix))
+    return(ssGSEAMatrix)
+}
+
+#Singscore
+.applySingscore <- function(exMatrix, geneSets, minSize = 7, internal_n_cores = 1){
+    exMatrixgenes <- rownames(exMatrix)
+    pathways_filtered <- lapply(geneSets, function(pathway) {
+        genes_com <- intersect(pathway, exMatrixgenes)
+        if (length(genes_com) >= minSize) {
+            return(pathway)
+        } else {
+            return(NULL)
+        }
+    })
+    pathways_filtered <- pathways_filtered[!sapply(pathways_filtered, is.null)]
+    geneSets <- pathways_filtered
+    rankMatrix <- rankGenes(exMatrix, tiesMethod = "average")
+    # Guardamos las opciones actuales
+    op <- pboptions()
+    # Establecemos un nuevo tipo de barra
+    pboptions(type = "txt", style = 3, char = "=")
+    print("Estimating singscore values")
+    listSign <- suppressWarnings(pblapply(geneSets, 
+        function(x) simpleScore(rankData = rankMatrix, upSet = x)))
+    # Volvemos a las opciones por defecto
+    pboptions(op)
+    listScores <- sapply(listSign, function(x) x$TotalScore)
+    if(is.list(listScores)){
+        pathMatrix <- do.call(rbind, listScores)}
+    else{
+        pathMatrix <- t(listScores)
+    }
+    colnames(pathMatrix) <- colnames(exMatrix)
+    #Escale data between -1 and 1
+    #pathMatrix <- pathMatrix / 0.5
+    return(pathMatrix)
+}

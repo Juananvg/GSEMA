@@ -1,0 +1,171 @@
+#########################
+# FUNCIONES DESARROLLADAS
+##########################
+
+#######################################################
+# Teniendo en cuenta las condiciones de las muestras
+######################################################
+
+#Cargar los datos de expresión y la lista de geneSet con sus genes
+obtainGeneSetMatrix <- function(geneSet){
+    genes_unicos <- unique(unlist(geneSet))
+    matriz_binaria <- matrix(0, nrow = length(geneSet), ncol = length(genes_unicos))
+    rownames(matriz_binaria) <- names(geneSet)
+    colnames(matriz_binaria) <- genes_unicos
+    for (i in 1:length(geneSet)) {
+        genes_en_ruta <- geneSet[[i]]
+        matriz_binaria[i, genes_en_ruta] <- 1
+    }
+    return(matriz_binaria)
+}
+
+
+#Función para obtener la matriz rutas por muestras
+obtainGeneSetSampleMatrix <- function(exMatrix, geneSetMatrix, condition){ #Hay que añadir las condiciones para los pesos
+    #geneSetMatrix <- geneSetMatrix / rowSums(geneSetMatrix)
+    genes_comunes <- intersect(rownames(exMatrix), colnames(geneSetMatrix))
+    exMatrix <- exMatrix[genes_comunes,]
+    geneSetMatrix <- geneSetMatrix[,genes_comunes]
+    geneSetMatrix <- geneSetMatrix[rowSums(geneSetMatrix) != 0,]
+    exMatrixExp <- exMatrix[, condition == 1]
+    exMatrixControl <- exMatrix[,condition == 0]
+    #exMatrix <- apply(abs(exMatrix), 2, rank)
+    #geneSetMatrix <- geneSetMatrix / rowSums(geneSetMatrix)
+    rankMatrix <- apply(abs(exMatrix), 2, rank)
+    pesosRank <- apply(rankMatrix, 1, median)
+    pesosRank <- pesosRank /median(pesosRank)
+    #medias <- apply(exMatrix,1, mean)
+    #desviaciones <- apply(exMatrix, 1, sd)
+    #pesosCV <- desviaciones / medias
+    #pesosCV <- pesos / max(pesosCV)
+    #pathSample <- geneSetMatrix %*% (pesosCV * pesosRank * exMatrix)
+    pathSample <- geneSetMatrix %*% (pesosRank * exMatrix)
+    return(pathSample)
+}
+
+
+
+
+
+
+
+#Crear la matriz de GeneSet
+
+obtainGeneSetMatrix <- function(geneSet){
+    genes_unicos <- unique(unlist(geneSet))
+    matriz_binaria <- matrix(0, nrow = length(geneSet), ncol = length(genes_unicos))
+    rownames(matriz_binaria) <- names(geneSet)
+    colnames(matriz_binaria) <- genes_unicos
+    for (i in 1:length(geneSet)) {
+        genes_en_ruta <- geneSet[[i]]
+        matriz_binaria[i, genes_en_ruta] <- 1
+    }
+    return(matriz_binaria)
+}
+
+
+#Función para obtener la matriz rutas por muestras
+obtainGeneSetSampleMatrix <- function(exMatrix, geneSetMatrix){ #Hay que añadir las condiciones para los pesos
+    #geneSetMatrix <- geneSetMatrix / rowSums(geneSetMatrix)
+    genes_comunes <- intersect(rownames(exMatrix), colnames(geneSetMatrix))
+    exMatrix <- exMatrix[genes_comunes,]
+    geneSetMatrix <- geneSetMatrix[,genes_comunes]
+    geneSetMatrix <- geneSetMatrix[rowSums(geneSetMatrix) != 0,]
+    #exMatrix <- apply(abs(exMatrix), 2, rank)
+    #geneSetMatrix <- geneSetMatrix / rowSums(geneSetMatrix)
+    rankMatrix <- apply(abs(exMatrix), 2, rank)
+    pesosRank <- apply(rankMatrix, 1, median)
+    pesosRank <- pesosRank /median(pesosRank)
+    #medias <- apply(exMatrix,1, mean)
+    #desviaciones <- apply(exMatrix, 1, sd)
+    #pesosCV <- desviaciones / medias
+    #pesosCV <- pesos / max(pesosCV)
+    #pathSample <- geneSetMatrix %*% (pesosCV * pesosRank * exMatrix)
+    pathSample <- geneSetMatrix %*% (pesosRank * exMatrix)
+    return(pathSample)
+}
+
+
+#Función para obtener la matriz rutas por muestras
+#obtainGeneSetSampleMatrix2 <- function(exMatrix, geneSetMatrix){ #Hay que añadir las condiciones para los pesos
+#    #geneSetMatrix <- geneSetMatrix / rowSums(geneSetMatrix)
+#    genes_comunes <- intersect(rownames(exMatrix), colnames(geneSetMatrix))
+#    exMatrix <- exMatrix[genes_comunes,]
+#    geneSetMatrix <- geneSetMatrix[,genes_comunes]
+#    geneSetMatrix <- geneSetMatrix[rowSums(geneSetMatrix) != 0,]
+#    #geneSetMatrix <- geneSetMatrix / rowSums(geneSetMatrix)
+#    medias <- apply(exMatrix,1, mean)
+#    desviaciones <- apply(exMatrix, 1, sd)
+#    pesos <- (desviaciones / medias)
+#    pesos <- pesos / max(pesos)
+#    pathSample <- geneSetMatrix %*% (pesos * exMatrix)
+#    return(pathSample)
+#}
+
+
+#####################
+#Funciones de Pedro
+#####################
+
+#Transform matrix to ranks:
+obtainRankMatrix <- function(exMatrix){
+    exMatrix <- apply(exMatrix, 2 , rank)
+    return(exMatrix)
+}
+
+
+
+#Matriz de geneSet X genes
+obtainGeneSetMatrixPedro <- function(geneSet){
+    genes_unicos <- unique(unlist(geneSet))
+    matriz_binaria <- matrix(0, nrow = length(geneSet), ncol = length(genes_unicos))
+    rownames(matriz_binaria) <- names(geneSet)
+    colnames(matriz_binaria) <- genes_unicos
+    for (i in 1:length(geneSet)) {
+        genes_en_ruta <- geneSet[[i]]
+        matriz_binaria[i, genes_en_ruta] <- 1
+    }
+    matriz_binaria <- matriz_binaria / rowSums(matriz_binaria)
+    return(matriz_binaria)
+}
+
+#Matriz geneSet por sample
+obtainGeneSetSampleMatrixPedro <- function(exMatrix, geneSetMatrix){ #Hay que añadir las condiciones para los pesos
+    genes_comunes <- intersect(rownames(exMatrix), colnames(geneSetMatrix))
+    exMatrix <- exMatrix[genes_comunes,]
+    geneSetMatrix <- geneSetMatrix[,genes_comunes]
+    genesTotales <- nrow(exMatrix)
+    pesos <- 1/ genesTotales
+    pathSample <- (geneSetMatrix %*% exMatrix) * pesos
+    return(pathSample)
+}
+
+#######################
+#Forma Mixta
+#######################
+obtainGeneSetMatrixMixta <- function(geneSet){
+    genes_unicos <- unique(unlist(geneSet))
+    matriz_binaria <- matrix(0, nrow = length(geneSet), ncol = length(genes_unicos))
+    rownames(matriz_binaria) <- names(geneSet)
+    colnames(matriz_binaria) <- genes_unicos
+    for (i in 1:length(geneSet)) {
+        genes_en_ruta <- geneSet[[i]]
+        matriz_binaria[i, genes_en_ruta] <- 1
+    }
+    return(matriz_binaria)
+}
+
+#Función para obtener la matriz rutas por muestras
+obtainGeneSetSampleMatrixMixta <- function(exMatrix, geneSetMatrix){ #Hay que añadir las condiciones para los pesos
+    genes_comunes <- intersect(rownames(exMatrix), colnames(geneSetMatrix))
+    exMatrix <- exMatrix[genes_comunes,]
+    geneSetMatrix <- geneSetMatrix[,genes_comunes]
+    rangos <- apply(1/exMatrix, 2, rank)
+    rangos <- apply(rangos,1, mean)
+    pesos <- 1/ rangos
+    pathSample <- geneSetMatrix %*% (pesos * exMatrix)
+    return(pathSample)
+}
+
+
+
