@@ -7,7 +7,7 @@ Description: performing the different steps of gene set enrichment meta-analysis
 License: GPL-2
 Depends: R (>= 4.3)
 Suggests: BiocStyle, qpdf, BiocGenerics, RUnit
-Imports: Biobase, DExMA, DExMAdata, NOISeq, limma, edgeR, singscore, GSVA, progress, pbapply, doParallel, parallel, BiocParallel, metafor, BiocGenerics, RColorBrewer, pheatmap, methods, scales, plyr, grDevices, stats
+Imports: Biobase, DExMA, limma, singscore, GSVA, progress, pbapply, doParallel, parallel, BiocParallel, metafor, RColorBrewer, pheatmap, methods, scales, plyr, grDevices, stats, impute
 biocViews: DifferentialExpression, GeneExpression, StatisticalMethod, QualityControl
 Encoding: UTF-8
 LazyData: false

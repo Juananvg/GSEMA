@@ -69,7 +69,7 @@
 #'
 #' Hedges, L. V. (1981). Distribution theory for Glass's estimator of effect
 #' size and related estimators. Journal of Educational Statistics, 6(2),
-#' 107–128. \url{⁠https://doi.org/10.3102/10769986006002107}
+#' 107–128. \url{https://doi.org/10.2307/11645887}
 #'
 #' Lin L, Aloe AM (2021). Evaluation of various estimators for standardized mean
 #' difference in meta-analysis. Stat Med. 2021 Jan 30;40(2):403-426.
@@ -82,7 +82,8 @@
 #'
 #' @examples
 #'
-#' calculateESpath(objectMApath = objectMApath_sim, measure = "limma")
+#' data("simulatedData")
+#' calculateESpath(objectMApath = objectMApathSim, measure = "limma")
 #'
 #' @export
 
@@ -144,9 +145,7 @@ calculateESpath <- function(objectMApath, measure = c("limma", "SMD", "MD"),
     names(Variance) <- names(objectMA)
     Total.Effect <- .matrixmerge(Effect)
     Total.Var <- .matrixmerge(Variance)
-    logFC <- pvalueIndAnalysis(objectMA, missAllow = missAllow)$logFC
-    Prop.dataset <- as.matrix(1-rowMeans(is.na(Total.Effect)))
-    result <- list(ES = Total.Effect, Var = Total.Var, logFC = logFC)
+    result <- list(ES = Total.Effect, Var = Total.Var)
     return(result)
 }
 
@@ -181,7 +180,8 @@ calculateESpath <- function(objectMApath, measure = c("limma", "SMD", "MD"),
                 function(y) sum(is.na(y))/k)<missAllow)
             print(length(rnum))
             if(length(rnum)>1){
-                objectMA[[j]][[1]][,rnum]<-impute.knn(objectMA[[j]][[1]][,rnum],
+                objectMA[[j]][[1]][,rnum]<-impute.knn(
+                    objectMA[[j]][[1]][,rnum],
                     k=10)$data}
             objectMA[[j]]<-.deleteNa(objectMA[[j]])
         }

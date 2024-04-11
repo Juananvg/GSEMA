@@ -33,7 +33,8 @@ a study
 }
 \examples{
 
-newObject <- filteringPaths(objectMApth_sim, threshold = "sd")
+data("simulatedData")
+newObject <- filteringPaths(objectMApathSim, threshold = "sd")
 
 }
 \seealso{

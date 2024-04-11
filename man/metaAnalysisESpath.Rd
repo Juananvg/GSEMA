@@ -66,8 +66,9 @@ The different meta-analysis methods that can be applied are:
 }
 \examples{
 
-results <- metaAnalysisESpath(objectMApath = objectMApath_sim,
-    measure = "limma, typeMethod = "REM)
+data("simulatedData")
+results <- metaAnalysisESpath(objectMApath = objectMApathSim,
+    measure = "limma", typeMethod = "REM")
 
 }
 \references{
@@ -85,7 +86,7 @@ New York: Russell Sage Foundation.
 
 Hedges, L. V. (1981). Distribution theory for Glass's estimator of effect
 size and related estimators. Journal of Educational Statistics, 6(2),
-107–128. \url{⁠https://doi.org/10.3102/10769986006002107}
+107–128. \url{https://doi.org/10.2307/11645887}
 
 Lin L, Aloe AM (2021). Evaluation of various estimators for standardized mean
 difference in meta-analysis. Stat Med. 2021 Jan 30;40(2):403-426.

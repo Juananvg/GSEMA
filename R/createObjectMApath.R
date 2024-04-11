@@ -15,7 +15,7 @@
 #' element in  the listPheno (default a vector of 1, all the first columns of
 #' each elements of listPheno are selected).
 #'
-#' @param  expGroups A list of vectors or a vector containing the names or the
+#' @param expGroups A list of vectors or a vector containing the names or the
 #' positions with which we identify the elements of the experiment groups
 #' (cases) of the namePheno element (default a vector  of 1, all the first
 #' groups are selected)
@@ -25,17 +25,17 @@
 #' (control) of the namePheno elements (default a vector  of 1, all the first
 #' groups are selected)
 #'
-#' @param genesets 	List of gene sets to check. Object similar
+#' @param geneSets 	List of gene sets to check. Object similar
 #' to the one used in the fgsea package
 #'
 #' @param pathMethod The single sample enrichment method used to obtain
 #' the enrichment score of each sample and gene set.
 #' See details for more information
 #'
-#' @param  minSize 	Minimum size of the resulting gene sets after gene
+#' @param minSize Minimum size of the resulting gene sets after gene
 #' identifier mapping. By default, the minimum size is 7.
 #'
-#' @param kdcf Only neccesary for the GSVA method. Character vector of length 1
+#' @param kcdf Only neccesary for the GSVA method. Character vector of length 1
 #' denoting the kernel to use during the non-parametric estimation of the
 #' cumulative distribution function of expression levels across samples.
 #' By default, kcdf="Gaussian" which is suitable when input expression values
@@ -44,11 +44,11 @@
 #' integer counts, such as those derived from RNA-seq experiments, then this
 #' argument should be set to kcdf="Poisson".
 #'
-#' @param n_cores Number of cores to use in the parallelization of the datsets.
-#' By default, n_cores=1.
+#' @param n.cores Number of cores to use in the parallelization of the datsets.
+#' By default, n.cores=1.
 #'
-#' @param internal_n_cores Number of cores to use in the parallelization of the
-#' single sample enrichment methods. By default internal_n_cores= 1.
+#' @param internal.n.cores Number of cores to use in the parallelization of the
+#' single sample enrichment methods. By default internal.n.cores= 1.
 #'
 #' @details The single sample scoring methods that can be used to obtain the
 #' enrichment score of each sample and gene set are:
@@ -62,15 +62,15 @@
 #'     }
 #'
 #'  In parallelization, several aspects must be considered.
-#'  n_cores refers to the parallelization of studies or datasets.
-#'  Therefore, if we have 3 studies, the maximum number for n_cores will be 3.
-#'  internal_n_cores refers to the parallelization of single sample enrichment
+#'  n.cores refers to the parallelization of studies or datasets.
+#'  Therefore, if we have 3 studies, the maximum number for n.cores will be 3.
+#'  internal.n.cores refers to the parallelization of single sample enrichment
 #'  methods. This is especially recommended for the ssGSEA method. For Singscore
 #'  and GSVA, it may also be advisable. The process is parallelized based on the
 #'  samples in each study. Therefore, the larger the number of samples, the
 #'  slower the process will be.
 #'  The number of cores that the computer will use is the multiplication of both
-#'  parameters n_cores * internal_n_cores = total cores.
+#'  parameters n.cores * internal.n.cores = total cores.
 #'
 #'
 #' @return The object needed to perform gene set enrichment meta-analysis.
@@ -108,12 +108,13 @@
 #'
 #' @examples
 #'
+#' data("simulatedData")
 #' listMatrices <- list(study1Ex, study2Ex, study3Ex, study4Ex, study5Ex)
 #' listPhenodata <- list(study1Pheno, study2Pheno, study3Pheno, study4Pheno, study5Pheno)
 #' phenoGroups <- c("Condition","Condition", "Condition", "Condition", "Condition")
 #' phenoCases <- list("Case", "Case", "Case", "Case", "Case")
 #' phenoControls <- list("Healthy", "Healthy", "Healthy", "Healthy", "Healthy")
-#' objectMApath_sim <- createObjectMApath(
+#' objectMApathSim <- createObjectMApath(
 #'    listEX = listMatrices,
 #'    listPheno = listPhenodata, namePheno = phenoGroups,
 #'    expGroups = phenoCases, refGroups = phenoControls,
@@ -128,14 +129,14 @@ createObjectMApath <- function(listEX, listPheno = NULL,
     namePheno =  c(rep(1, length(listEX))),
     expGroups= c(rep(1, length(listEX))),
     refGroups = c(rep(2, length(listEX))),
-    objectExMA, geneSets,
+    geneSets,
     pathMethod = c("GSVA", "Zscore", "ssGSEA", "Singscore"), minSize = 7,
-    kcdf = "Gaussian", n_cores = 1, internal_n_cores = 1){
+    kcdf = "Gaussian", n.cores = 1, internal.n.cores = 1){
     pathMethod <- match.arg(pathMethod)
     objectExMA <- createObjectMA(listEX, listPheno, namePheno, expGroups,
         refGroups)
     objectExMApath <- .objectExMA.to.objectMApath(objectExMA, geneSets,
-        pathMethod, minSize, kcdf, n_cores, internal_n_cores)
+        pathMethod, minSize, kcdf, n.cores, internal.n.cores)
     return(objectExMApath)
 }
 
@@ -143,17 +144,17 @@ createObjectMApath <- function(listEX, listPheno = NULL,
 #Pass DExMA objectMA to objectMAEXpath
 .objectExMA.to.objectMApath <- function(objectExMA, geneSets,
     pathMethod = c("GSVA", "Zscore", "ssGSEA", "Singscore"), minSize = 7,
-    kcdf = "Gaussian", n_cores = 1, internal_n_cores = 1){
+    kcdf = "Gaussian", n.cores = 1, internal.n.cores = 1){
     pathMethod <- match.arg(pathMethod)
     if(pathMethod == "GSVA"){
         print("Applying the GSVA method")
         objectMApath <- mclapply(objectExMA, function(x){
             x[[1]] <- .applyGSVA(x[[1]], geneSets = geneSets,
-                minSize = minSize, kcdf = kcdf, internal_n_cores = internal_n_cores)
+                minSize = minSize, kcdf = kcdf, internal.n.cores = internal.n.cores)
             x[[2]] <- x[[2]]
             names(x) <- c("mPath", "condition")
             return(x)},
-            mc.cores = n_cores
+            mc.cores = n.cores
         )
         names(objectMApath) <- names(objectExMA)
     }
@@ -161,11 +162,11 @@ createObjectMApath <- function(listEX, listPheno = NULL,
         print("Applying the ssGSEA method")
         objectMApath <- mclapply(objectExMA, function(x){
             x[[1]] <- .applyssGSEA(x[[1]], geneSets = geneSets, minSize = minSize,
-                internal_n_cores = internal_n_cores)
+                internal.n.cores = internal.n.cores)
             x[[2]] <- x[[2]]
             names(x) <- c("mPath", "condition")
             return(x)},
-            mc.cores = n_cores
+            mc.cores = n.cores
         )
         names(objectMApath) <- names(objectExMA)
     }
@@ -173,11 +174,11 @@ createObjectMApath <- function(listEX, listPheno = NULL,
         print("Applying the Zscore method")
         objectMApath <- mclapply(objectExMA, function(x) {
             x[[1]] <- .applyZscore(x[[1]], geneSets = geneSets, minSize = minSize,
-                internal_n_cores = internal_n_cores)
+                internal.n.cores = internal.n.cores)
             x[[2]] <- x[[2]]
             names(x) <- c("mPath", "condition")
             return(x)},
-            mc.cores = n_cores
+            mc.cores = n.cores
         )
         names(objectMApath) <- names(objectExMA)
     }
@@ -188,7 +189,7 @@ createObjectMApath <- function(listEX, listPheno = NULL,
             x[[2]] <- x[[2]]
             names(x) <- c("mPath", "condition")
             return(x)},
-            mc.cores = n_cores
+            mc.cores = n.cores
         )
         names(objectMApath) <- names(objectExMA)
     }
@@ -198,28 +199,28 @@ createObjectMApath <- function(listEX, listPheno = NULL,
 
 
 #GSVA
-.applyGSVA <- function(exMatrix, geneSets, minSize = 7, kcdf = "Gaussian", internal_n_cores = 1){
+.applyGSVA <- function(exMatrix, geneSets, minSize = 7, kcdf = "Gaussian", internal.n.cores = 1){
     paramMatrix <- gsvaParam(exMatrix, geneSets, minSize =  minSize, kcdf = kcdf)
-    gsvaMatrix <- gsva(paramMatrix, BPPARAM = MulticoreParam(workers = internal_n_cores))
+    gsvaMatrix <- gsva(paramMatrix, BPPARAM = MulticoreParam(workers = internal.n.cores))
     return(gsvaMatrix)
 }
 
 #Zscore
-.applyZscore <- function(exMatrix, geneSets, minSize = 7, internal_n_cores = 1){
+.applyZscore <- function(exMatrix, geneSets, minSize = 7, internal.n.cores = 1){
     paramMatrix <- zscoreParam(exMatrix, geneSets, minSize =  minSize)
-    ZscoreMatrix <- gsva(paramMatrix, BPPARAM = MulticoreParam(workers = internal_n_cores))
+    ZscoreMatrix <- gsva(paramMatrix, BPPARAM = MulticoreParam(workers = internal.n.cores))
     return(ZscoreMatrix)
 }
 
 #ssGSEA
-.applyssGSEA <- function(exMatrix, geneSets, minSize = 7, internal_n_cores = 1){
+.applyssGSEA <- function(exMatrix, geneSets, minSize = 7, internal.n.cores = 1){
     paramMatrix <- ssgseaParam(exMatrix, geneSets, minSize =  minSize)
-    ssGSEAMatrix <- gsva(paramMatrix, BPPARAM = MulticoreParam(workers = internal_n_cores))
+    ssGSEAMatrix <- gsva(paramMatrix, BPPARAM = MulticoreParam(workers = internal.n.cores))
     return(ssGSEAMatrix)
 }
 
 #Singscore
-.applySingscore <- function(exMatrix, geneSets, minSize = 7, internal_n_cores = 1){
+.applySingscore <- function(exMatrix, geneSets, minSize = 7, internal.n.cores = 1){
     exMatrixgenes <- rownames(exMatrix)
     pathways_filtered <- lapply(geneSets, function(pathway) {
         genes_com <- intersect(pathway, exMatrixgenes)
