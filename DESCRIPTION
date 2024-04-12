@@ -8,7 +8,7 @@ License: GPL-2
 Depends: R (>= 4.3)
 Suggests: BiocStyle, qpdf, BiocGenerics, RUnit
 Imports: Biobase, DExMA, limma, singscore, GSVA, progress, pbapply, doParallel, parallel, BiocParallel, metafor, RColorBrewer, pheatmap, methods, scales, plyr, grDevices, stats, impute
-biocViews: DifferentialExpression, GeneExpression, StatisticalMethod, QualityControl
+biocViews: StatisticalMethod, GeneSetEnrichment, Pathways
 Encoding: UTF-8
 LazyData: false
 RoxygenNote: 7.3.1
