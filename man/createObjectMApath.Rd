@@ -14,6 +14,7 @@ createObjectMApath(
   pathMethod = c("GSVA", "Zscore", "ssGSEA", "Singscore"),
   minSize = 7,
   kcdf = "Gaussian",
+  normalize = TRUE,
   n.cores = 1,
   internal.n.cores = 1
 )
@@ -59,6 +60,9 @@ are continuous, such as microarray fluorescent units in logarithmic scale,
 RNA-seq log-CPMs, log-RPKMs or log-TPMs. When input expression values are
 integer counts, such as those derived from RNA-seq experiments, then this
 argument should be set to kcdf="Poisson".}
+
+\item{normalize}{boolean specifying if the gen set matrices should be
+normalized. Default value "TRUE".}
 
 \item{n.cores}{Number of cores to use in the parallelization of the datsets.
 By default, n.cores=1.}

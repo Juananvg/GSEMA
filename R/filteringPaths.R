@@ -10,11 +10,10 @@
 #' 0 represents one group (controls) and 1 represents the other group (cases).
 #'
 #' @param threshold A number that indicates the threshold to eliminate a gene
-#' set. For a elimnite a gene set is neccessary that the mean for both groups
+#' set. For a eliminqte a gene set is neccessary that the mean for both groups
 #' are less than the threshold
 #' If  threshold = "sd" the threshold will be the standard deviation of the
-#' gene set. If the standard deviation is greater than 1, the threshold will be
-#' 1. The default value is "sd".
+#' gene set. The default value is 0.85.
 #'
 #' @param n_cores A number that indicates the number of cores to use in the
 #' parallelization. The default value is 1.
@@ -37,14 +36,14 @@
 
 
 
-filteringPaths <- function(objectMApath, threshold = "sd", n_cores = 1){
+filteringPaths <- function(objectMApath, threshold = 0.85, n_cores = 1){
     objectMApath <- mclapply(objectMApath, .filtering_pathways,
         threshold = threshold, mc.cores = n_cores)
     return(objectMApath)
 }
 
 #Function for filtering
-.filtering_pathways <- function(study, threshold = "sd"){
+.filtering_pathways <- function(study, threshold = 0.85){
     threshold_1 <- threshold
     exmatrix <- study[[1]]
     cond <- study[[2]]

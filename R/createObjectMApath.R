@@ -44,6 +44,9 @@
 #' integer counts, such as those derived from RNA-seq experiments, then this
 #' argument should be set to kcdf="Poisson".
 #'
+#' @param normalize boolean specifying if the gen set matrices should be
+#' normalized. Default value "TRUE".
+#'
 #' @param n.cores Number of cores to use in the parallelization of the datsets.
 #' By default, n.cores=1.
 #'
@@ -131,12 +134,14 @@ createObjectMApath <- function(listEX, listPheno = NULL,
     refGroups = c(rep(2, length(listEX))),
     geneSets,
     pathMethod = c("GSVA", "Zscore", "ssGSEA", "Singscore"), minSize = 7,
-    kcdf = "Gaussian", n.cores = 1, internal.n.cores = 1){
+    kcdf = "Gaussian", normalize = TRUE,
+    n.cores = 1, internal.n.cores = 1){
     pathMethod <- match.arg(pathMethod)
     objectExMA <- createObjectMA(listEX, listPheno, namePheno, expGroups,
         refGroups)
     objectExMApath <- .objectExMA.to.objectMApath(objectExMA, geneSets,
-        pathMethod, minSize, kcdf, n.cores, internal.n.cores)
+        pathMethod, minSize, kcdf, normalize = normalize,
+        n.cores, internal.n.cores)
     return(objectExMApath)
 }
 
@@ -144,13 +149,14 @@ createObjectMApath <- function(listEX, listPheno = NULL,
 #Pass DExMA objectMA to objectMAEXpath
 .objectExMA.to.objectMApath <- function(objectExMA, geneSets,
     pathMethod = c("GSVA", "Zscore", "ssGSEA", "Singscore"), minSize = 7,
-    kcdf = "Gaussian", n.cores = 1, internal.n.cores = 1){
+    kcdf = "Gaussian", n.cores = 1, internal.n.cores = 1, normalize = TRUE){
     pathMethod <- match.arg(pathMethod)
     if(pathMethod == "GSVA"){
         print("Applying the GSVA method")
         objectMApath <- mclapply(objectExMA, function(x){
             x[[1]] <- .applyGSVA(x[[1]], geneSets = geneSets,
-                minSize = minSize, kcdf = kcdf, internal.n.cores = internal.n.cores)
+                minSize = minSize, kcdf = kcdf, normalize = normalize,
+                internal.n.cores = internal.n.cores)
             x[[2]] <- x[[2]]
             names(x) <- c("mPath", "condition")
             return(x)},
@@ -161,7 +167,8 @@ createObjectMApath <- function(listEX, listPheno = NULL,
     if(pathMethod == "ssGSEA"){
         print("Applying the ssGSEA method")
         objectMApath <- mclapply(objectExMA, function(x){
-            x[[1]] <- .applyssGSEA(x[[1]], geneSets = geneSets, minSize = minSize,
+            x[[1]] <- .applyssGSEA(x[[1]], geneSets = geneSets,
+                minSize = minSize, normalize = normalize,
                 internal.n.cores = internal.n.cores)
             x[[2]] <- x[[2]]
             names(x) <- c("mPath", "condition")
@@ -173,7 +180,8 @@ createObjectMApath <- function(listEX, listPheno = NULL,
     if(pathMethod == "Zscore"){
         print("Applying the Zscore method")
         objectMApath <- mclapply(objectExMA, function(x) {
-            x[[1]] <- .applyZscore(x[[1]], geneSets = geneSets, minSize = minSize,
+            x[[1]] <- .applyZscore(x[[1]], geneSets = geneSets,
+                minSize = minSize,
                 internal.n.cores = internal.n.cores)
             x[[2]] <- x[[2]]
             names(x) <- c("mPath", "condition")
@@ -185,7 +193,8 @@ createObjectMApath <- function(listEX, listPheno = NULL,
     if(pathMethod == "Singscore"){
         print("Applying the singscore method")
         objectMApath <- mclapply(objectExMA, function(x) {
-            x[[1]] <- .applySingscore(x[[1]], geneSets = geneSets, minSize = minSize)
+            x[[1]] <- .applySingscore(x[[1]], geneSets = geneSets,
+                normalize = normalize, minSize = minSize)
             x[[2]] <- x[[2]]
             names(x) <- c("mPath", "condition")
             return(x)},
@@ -199,9 +208,15 @@ createObjectMApath <- function(listEX, listPheno = NULL,
 
 
 #GSVA
-.applyGSVA <- function(exMatrix, geneSets, minSize = 7, kcdf = "Gaussian", internal.n.cores = 1){
-    paramMatrix <- gsvaParam(exMatrix, geneSets, minSize =  minSize, kcdf = kcdf)
-    gsvaMatrix <- gsva(paramMatrix, BPPARAM = MulticoreParam(workers = internal.n.cores))
+.applyGSVA <- function(exMatrix, geneSets, minSize = 7, kcdf = "Gaussian",
+    internal.n.cores = 1, normalize = TRUE){
+    paramMatrix <- gsvaParam(exMatrix, geneSets, minSize = minSize, kcdf = kcdf)
+    gsvaMatrix <- gsva(paramMatrix,
+        BPPARAM = MulticoreParam(workers = internal.n.cores))
+    #gsvaMatrix normalization
+    if(normalize == TRUE){
+        gsvaMatrix <- (gsvaMatrix - mean(gsvaMatrix)) / sd(gsvaMatrix)
+    }
     return(gsvaMatrix)
 }
 
@@ -216,6 +231,10 @@ createObjectMApath <- function(listEX, listPheno = NULL,
 .applyssGSEA <- function(exMatrix, geneSets, minSize = 7, internal.n.cores = 1){
     paramMatrix <- ssgseaParam(exMatrix, geneSets, minSize =  minSize)
     ssGSEAMatrix <- gsva(paramMatrix, BPPARAM = MulticoreParam(workers = internal.n.cores))
+    #ssGSEAMatrix normalization
+    if(normalize == TRUE){
+        ssGSEAMatrix <- (ssGSEAMatrix - mean(ssGSEAMatrix)) / sd(ssGSEAMatrix)
+    }
     return(ssGSEAMatrix)
 }
 
@@ -246,5 +265,9 @@ createObjectMApath <- function(listEX, listPheno = NULL,
         pathMatrix <- t(listScores)
     }
     colnames(pathMatrix) <- colnames(exMatrix)
+    #pathMatrix normalization
+    if(normalize == TRUE){
+        pathMatrix <- (pathMatrix - mean(pathMatrix)) / sd(pathMatrix)
+    }
     return(pathMatrix)
 }

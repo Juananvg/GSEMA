@@ -4,7 +4,7 @@
 \alias{filteringPaths}
 \title{Fuction for filtering gene sets with low expression}
 \usage{
-filteringPaths(objectMApath, threshold = "sd", n_cores = 1)
+filteringPaths(objectMApath, threshold = 0.85, n_cores = 1)
 }
 \arguments{
 \item{objectMApath}{A list of list. Each list contains two elements.
@@ -14,11 +14,10 @@ the state of the different samples of the Gene Sets matrix.
 0 represents one group (controls) and 1 represents the other group (cases).}
 
 \item{threshold}{A number that indicates the threshold to eliminate a gene
-set. For a elimnite a gene set is neccessary that the mean for both groups
+set. For a eliminqte a gene set is neccessary that the mean for both groups
 are less than the threshold
 If  threshold = "sd" the threshold will be the standard deviation of the
-gene set. If the standard deviation is greater than 1, the threshold will be
-1. The default value is "sd".}
+gene set. The default value is 0.85.}
 
 \item{n_cores}{A number that indicates the number of cores to use in the
 parallelization. The default value is 1.}
