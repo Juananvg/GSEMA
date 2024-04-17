@@ -228,7 +228,8 @@ createObjectMApath <- function(listEX, listPheno = NULL,
 }
 
 #ssGSEA
-.applyssGSEA <- function(exMatrix, geneSets, minSize = 7, internal.n.cores = 1){
+.applyssGSEA <- function(exMatrix, geneSets, minSize = 7, normalize = TRUE,
+    internal.n.cores = 1){
     paramMatrix <- ssgseaParam(exMatrix, geneSets, minSize =  minSize)
     ssGSEAMatrix <- gsva(paramMatrix, BPPARAM = MulticoreParam(workers = internal.n.cores))
     #ssGSEAMatrix normalization
@@ -239,7 +240,8 @@ createObjectMApath <- function(listEX, listPheno = NULL,
 }
 
 #Singscore
-.applySingscore <- function(exMatrix, geneSets, minSize = 7, internal.n.cores = 1){
+.applySingscore <- function(exMatrix, geneSets, minSize = 7, normalize = TRUE,
+    internal.n.cores = 1){
     exMatrixgenes <- rownames(exMatrix)
     pathways_filtered <- lapply(geneSets, function(pathway) {
         genes_com <- intersect(pathway, exMatrixgenes)
