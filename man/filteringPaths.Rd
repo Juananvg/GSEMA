@@ -4,7 +4,7 @@
 \alias{filteringPaths}
 \title{Fuction for filtering gene sets with low expression}
 \usage{
-filteringPaths(objectMApath, threshold = 0.85, n_cores = 1)
+filteringPaths(objectMApath, threshold = 0.65, n_cores = 1)
 }
 \arguments{
 \item{objectMApath}{A list of list. Each list contains two elements.

@@ -13,7 +13,7 @@
 #' set. For a eliminqte a gene set is neccessary that the mean for both groups
 #' are less than the threshold
 #' If  threshold = "sd" the threshold will be the standard deviation of the
-#' gene set. The default value is 0.85.
+#' gene set. The default value is 0.65.
 #'
 #' @param n_cores A number that indicates the number of cores to use in the
 #' parallelization. The default value is 1.
@@ -36,7 +36,7 @@
 
 
 
-filteringPaths <- function(objectMApath, threshold = 0.85, n_cores = 1){
+filteringPaths <- function(objectMApath, threshold = 0.65, n_cores = 1){
     objectMApath <- mclapply(objectMApath, .filtering_pathways,
         threshold = threshold, mc.cores = n_cores)
     return(objectMApath)

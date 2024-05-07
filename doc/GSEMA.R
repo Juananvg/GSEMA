@@ -62,7 +62,7 @@ objectMApathSim <- createObjectMApath(
 ###################################################
 ### code chunk number 8: GSEMA.Rnw:173-174
 ###################################################
-objectMApathSim <- filteringPaths(objectMApathSim, threshold = 0.85)
+objectMApathSim <- filteringPaths(objectMApathSim, threshold = 0.65)
 
 
 ###################################################
