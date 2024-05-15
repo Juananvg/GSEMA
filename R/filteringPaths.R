@@ -10,7 +10,7 @@
 #' 0 represents one group (controls) and 1 represents the other group (cases).
 #'
 #' @param threshold A number that indicates the threshold to eliminate a gene
-#' set. For a eliminqte a gene set is neccessary that the mean for both groups
+#' set. For a eliminqte a gene set is neccessary that the median for both groups
 #' are less than the threshold
 #' If  threshold = "sd" the threshold will be the standard deviation of the
 #' gene set. The default value is 0.65.
@@ -43,7 +43,7 @@ filteringPaths <- function(objectMApath, threshold = 0.65, n_cores = 1){
 }
 
 #Function for filtering
-.filtering_pathways <- function(study, threshold = 0.85){
+.filtering_pathways <- function(study, threshold = 0.65){
     threshold_1 <- threshold
     exmatrix <- study[[1]]
     cond <- study[[2]]
@@ -55,8 +55,8 @@ filteringPaths <- function(objectMApath, threshold = 0.65, n_cores = 1){
     }
     index <- c()
     for(path in seq_len(nrow(exmatrix))){
-        m1 <- mean(exmatrix[path,cond == 0])
-        m2 <- mean(exmatrix[path,cond == 1])
+        m1 <- median(exmatrix[path,cond == 0])
+        m2 <- median(exmatrix[path,cond == 1])
         if(abs(m1) < threshold_1 & abs(m2) < threshold_1){
             index <- c(index,path)
         }

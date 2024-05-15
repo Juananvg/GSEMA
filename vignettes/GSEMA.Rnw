@@ -167,7 +167,7 @@ Before performing the meta-analysis, it is important to filter out those pathway
 
 \begin{itemize}
     \item \emph{objectMApath}: the meta-analysis object of \textbf{GSEMA} package.
-    \item \emph{threshold}:A number that indicates the threshold to eliminate a gene set. For a eliminate a gene set is necessary that the mean for both groups are less than the threshold. If  threshold = "sd" the threshold will be the standard deviation of the gene set. The default value is 0.65.
+    \item \emph{threshold}:A number that indicates the threshold to eliminate a gene set. For a eliminate a gene set is necessary that the median for both groups are less than the threshold. If  threshold = "sd" the threshold will be the standard deviation of the gene set. The default value is 0.65.
 \end{itemize}
 
 <<>>=
