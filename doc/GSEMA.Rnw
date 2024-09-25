@@ -11,6 +11,7 @@ BiocStyle::latex()
 
 \bioctitle[GSEMA package]{Gene Set Enrichment Meta-Analysis with GSEMA package}
 \author[1,2]{Juan Antonio Villatoro-García}
+\author[1,2]{Pablo Jurado-Bascón}
 \author[1,2]{Pedro Carmona-Sáez\thanks{\email{pedro.carmona@genyo.es}}}
 \affil[1]{Department of Statistics and Operational Research. University of Granada}
 \affil[2]{GENYO, Centre for Genomics and Oncological Research}
