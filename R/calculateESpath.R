@@ -39,15 +39,16 @@
 #' The \bold{"limma"} method used the limma package to calculate the effect size
 #' and the variance of the effect size. The effect size is calculated from the
 #' moderated Student's t computed by limma. From it, the estimator of Hedges'g
-#' and its corresponding variance are obtained. In this way, some of the false
-#' positives obtained by the "SMD" method are reduced.
+#' and its corresponding variance are obtained based on 
+#' (Rosenthal, R., & Rosnow, R. L., 2008))
+#' In this way, some of the false positives obtained by 
+#' the "SMD" method are reduced.
 #'
 #' The \bold{WithinVarCorrect} parameter is a logical value that indicates if
 #' the within variance correction should be applied. In the case of applying
 #' the correction, the variance of the gene sets in each of the studies is
 #' calculated based on the mean of the estimators and not on the estimator of
-#' the study itself as described in formula (21) by
-#' Lin L. and Aloe AM (Lin L and Aloe AM 2021.)
+#' the study itself as described in formula (21) by (Lin L and Aloe AM 2021.)
 #'
 #'
 #' @return A list formed by two elements:
@@ -74,6 +75,9 @@
 #' Lin L, Aloe AM (2021). Evaluation of various estimators for standardized mean
 #' difference in meta-analysis. Stat Med. 2021 Jan 30;40(2):403-426.
 #' \url{https://doi.org/10.1002/sim.87811}
+#' 
+#' Rosenthal, R., & Rosnow, R. L. (2008). Essentials of behavioral research:
+#' Methods and data analysis. McGraw-Hill.
 #'
 #' @author Juan Antonio Villatoro Garcia,
 #' \email{juanantoniovillatorogarcia@@gmail.com}

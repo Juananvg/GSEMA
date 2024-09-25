@@ -58,7 +58,22 @@ It performs Gene Sets Enrichment meta-analysis by applying Effects size
 combination methods
 }
 \details{
-The different meta-analysis methods that can be applied are:
+There are different ways to calculate the effect size of a gene set:
+\enumerate{
+ \item "MD": Raw Mean Difference (Borenstein, 2009)
+ \item "SMD":  Standardized Mean Difference (Hedges, 1981)
+ \item "limma": Standardized Mean Difference calculated from the
+ t-statistics and degrees of freedom obtained by the limma package by
+ applying the transformation of Rosenthal and Rosnow, 2008). Its calculation
+ is similar to the one proposed by (Marot et al., 2009) but considering the
+ transformation of (Rosenthal and Rosnow, 2008).
+    }
+
+The correction of the variance of the effect size is based on
+Lin L, Aloe AM (2021) in which the variance is calculated from the
+different estimators.
+
+The meta-analysis methods that can be applied are:
 \enumerate{
  \item "FEM": Fixed Effects model
  \item "REM": Random Effects model
@@ -72,9 +87,9 @@ results <- metaAnalysisESpath(objectMApath = objectMApathSim,
 
 }
 \references{
-Daniel Toro-Domínguez, Juan Antonio Villatoro-García,
-Jordi Martorell-Marugán, Yolanda Román-Montoya, Marta E Alarcón-Riquelme,
-Pedro Carmona-Sáez (2020).
+Toro-Domínguez D., Villatoro-García J.A.,
+Martorell-Marugán J., Román-Montoya Y., Alarcón-Riquelme M.E.,
+Carmona-Sáez P. (2020).
 A survey of gene expression meta-analysis: methods and applications,
 Briefings in Bioinformatics, bbaa019,
 \url{https://doi.org/10.1093/bib/bbaa019}
@@ -91,6 +106,13 @@ size and related estimators. Journal of Educational Statistics, 6(2),
 Lin L, Aloe AM (2021). Evaluation of various estimators for standardized mean
 difference in meta-analysis. Stat Med. 2021 Jan 30;40(2):403-426.
 \url{https://doi.org/10.1002/sim.87811}
+
+Marot, G., Foulley, J. L., Mayer, C. D., & Jaffrézic, F. (2009).
+Moderated effect size and P-value combinations for microarray meta-analyses.
+Bioinformatics. 2692-2699. \url{https://doi:10.1093/bioinformatics/btp444}
+
+Rosenthal, R., & Rosnow, R. L. (2008). Essentials of behavioral research:
+Methods and data analysis. McGraw-Hill.
 }
 \seealso{
 \code{\link{calculateESpath}}
