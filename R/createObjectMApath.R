@@ -146,59 +146,58 @@ createObjectMApath <- function(listEX, listPheno = NULL,
 }
 
 
-#Pass DExMA objectMA to objectMAEXpath
+#Create objectMAEXpath
 .objectExMA.to.objectMApath <- function(objectExMA, geneSets,
     pathMethod = c("GSVA", "Zscore", "ssGSEA", "Singscore"), minSize = 7,
     kcdf = "Gaussian", n.cores = 1, internal.n.cores = 1, normalize = TRUE){
     pathMethod <- match.arg(pathMethod)
     if(pathMethod == "GSVA"){
         print("Applying the GSVA method")
-        objectMApath <- mclapply(objectExMA, function(x){
+        objectMApath <- bplapply(objectExMA, function(x){
             x[[1]] <- .applyGSVA(x[[1]], geneSets = geneSets,
                 minSize = minSize, kcdf = kcdf, normalize = normalize,
                 internal.n.cores = internal.n.cores)
             x[[2]] <- x[[2]]
             names(x) <- c("mPath", "condition")
             return(x)},
-            mc.cores = n.cores
+            BPPARAM = MulticoreParam(workers = n.cores)
         )
         names(objectMApath) <- names(objectExMA)
     }
     if(pathMethod == "ssGSEA"){
         print("Applying the ssGSEA method")
-        objectMApath <- mclapply(objectExMA, function(x){
+        objectMApath <- bplapply(objectExMA, function(x){
             x[[1]] <- .applyssGSEA(x[[1]], geneSets = geneSets,
                 minSize = minSize, normalize = normalize,
                 internal.n.cores = internal.n.cores)
             x[[2]] <- x[[2]]
             names(x) <- c("mPath", "condition")
             return(x)},
-            mc.cores = n.cores
+            BPPARAM = MulticoreParam(workers = n.cores)
         )
         names(objectMApath) <- names(objectExMA)
     }
     if(pathMethod == "Zscore"){
-        print("Applying the Zscore method")
-        objectMApath <- mclapply(objectExMA, function(x) {
+        objectMApath <- bplapply(objectExMA, function(x) {
             x[[1]] <- .applyZscore(x[[1]], geneSets = geneSets,
                 minSize = minSize,
                 internal.n.cores = internal.n.cores)
             x[[2]] <- x[[2]]
             names(x) <- c("mPath", "condition")
             return(x)},
-            mc.cores = n.cores
+            BPPARAM = MulticoreParam(workers = n.cores)
         )
         names(objectMApath) <- names(objectExMA)
     }
     if(pathMethod == "Singscore"){
         print("Applying the singscore method")
-        objectMApath <- mclapply(objectExMA, function(x) {
+        objectMApath <- bplapply(objectExMA, function(x) {
             x[[1]] <- .applySingscore(x[[1]], geneSets = geneSets,
                 normalize = normalize, minSize = minSize)
             x[[2]] <- x[[2]]
             names(x) <- c("mPath", "condition")
             return(x)},
-            mc.cores = n.cores
+            BPPARAM = MulticoreParam(workers = n.cores)
         )
         names(objectMApath) <- names(objectExMA)
     }
