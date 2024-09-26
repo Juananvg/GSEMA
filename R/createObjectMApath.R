@@ -112,11 +112,11 @@
 #' @examples
 #'
 #' data("simulatedData")
-#' listMatrices <- list(study1Ex, study2Ex, study3Ex, study4Ex, study5Ex)
-#' listPhenodata <- list(study1Pheno, study2Pheno, study3Pheno, study4Pheno, study5Pheno)
-#' phenoGroups <- c("Condition","Condition", "Condition", "Condition", "Condition")
-#' phenoCases <- list("Case", "Case", "Case", "Case", "Case")
-#' phenoControls <- list("Healthy", "Healthy", "Healthy", "Healthy", "Healthy")
+#' listMatrices <- list(study1Ex, study2Ex, study3Ex)
+#' listPhenodata <- list(study1Pheno, study2Pheno, study3Pheno)
+#' phenoGroups <- c("Condition","Condition", "Condition")
+#' phenoCases <- list("Case", "Case", "Case")
+#' phenoControls <- list("Healthy", "Healthy", "Healthy")
 #' objectMApathSim <- createObjectMApath(
 #'    listEX = listMatrices,
 #'    listPheno = listPhenodata, namePheno = phenoGroups,
