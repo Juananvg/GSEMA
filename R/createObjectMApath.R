@@ -137,7 +137,7 @@ createObjectMApath <- function(listEX, listPheno = NULL,
     kcdf = "Gaussian", normalize = TRUE,
     n.cores = 1, internal.n.cores = 1){
     pathMethod <- match.arg(pathMethod)
-    objectExMA <- createObjectMA(listEX, listPheno, namePheno, expGroups,
+    objectExMA <- .createObjectMA(listEX, listPheno, namePheno, expGroups,
         refGroups)
     objectExMApath <- .objectExMA.to.objectMApath(objectExMA, geneSets,
         pathMethod, minSize, kcdf, normalize = normalize,
@@ -145,6 +145,106 @@ createObjectMApath <- function(listEX, listPheno = NULL,
     return(objectExMApath)
 }
 
+
+#Create objectMa similar to DExMA
+.createObjectMA <- function(listEX, listPheno = NULL,
+    namePheno =  c(rep(1, length(listEX))),
+    expGroups= c(rep(1, length(listEX))),
+    refGroups = c(rep(2, length(listEX)))){
+    #check input objects
+    if(!is.list(listEX)){
+        stop("listEX  must be a list")
+    }
+    if(length(listEX)<2){stop("There must be at least 2 studies")}
+    if (!any(is.list(listPheno) | is.null(listPheno))){
+        stop("listPheno must be a List or NULL")
+    }
+    if(!any(is.list(namePheno) | is.numeric(namePheno) |
+            is.character(namePheno))){
+        stop("namePheno  must be a list or numeric or character")
+    }
+    if(!any(is.list(expGroups) | is.numeric(expGroups) |
+            is.character(expGroups))){
+        stop("expGroups  must be a list or numeric or character")
+    }
+    if(!any(is.list(refGroups) | is.numeric(refGroups) |
+            is.character(refGroups))){
+        stop("refGroups  must be a list or numeric or character")
+    }
+    #Obtaining the object
+    container <- list(0)
+    for (i in seq_len(length(listEX))) {
+        container[[i]] <- .elementObjectMA(
+            expressionMatrix=as.matrix(listEX[[i]]),
+            pheno=listPheno[[i]],
+            groupPheno=namePheno[[i]],
+            expGroup=expGroups[[i]],
+            refGroup=refGroups[[i]])
+    }
+    #Names of the results
+    if(is.null(names(listEX))){
+        names(container) <- paste("Study",seq_len(length(listEX)),sep="")}
+    else{
+        if(length(names(listEX)) >
+                length(names(listEX)[is.na(names(listEX))==FALSE])){
+            names(container) <- paste("Study",seq_len(length(listEX)),sep="")}
+        else{names(container) <- names(listEX)}}
+    return(container)
+}
+
+
+#Element objectMA similar to DExMA
+.elementObjectMA <- function(expressionMatrix, pheno=NULL, groupPheno,
+    expGroup=1, refGroup=2){
+    if (!any(is.data.frame(expressionMatrix) | is.matrix(expressionMatrix) |
+            is(expressionMatrix,"ExpressionSet"))){
+        stop("Elements of listEX must be a  dataframe, matrix or
+            ExpressionSet object")
+    }
+    if (!any(is.data.frame(pheno) | is.matrix(pheno) | is.null(pheno))){
+        stop("Elements of listPheno must be a dataframe, a matrix or NULL")}
+    if (!any(is.character(groupPheno) |is.numeric(groupPheno))){
+        stop("groupPheno must be a character or numeric object")}
+    if (!any(is.character(expGroup) | is.numeric(expGroup))){
+        stop("expGroup must be a character or numeric object")}
+    if (!any(is.character(refGroup) | is.numeric(refGroup))){
+        stop("refGroup must be a character or numeric object")}
+    ## Get data from expression set
+    if(is(expressionMatrix, "ExpressionSet")){
+        if (is.null(pheno)){
+            pheno <- pData(expressionMatrix)}
+        expressionMatrix <- exprs(expressionMatrix)
+    }
+    else{
+        if(is.null(pheno)) {
+            stop("If DATA is not a ExpressionSet, you must provide
+                pheno parameter")}
+    }
+    colnames(expressionMatrix) = as.character(colnames(expressionMatrix))
+    rownames(pheno) = as.character(rownames(pheno))
+    pheno = pheno[colnames(expressionMatrix),,drop=FALSE]
+    if (is.numeric(groupPheno)){
+        groupPheno <- colnames(pheno)[groupPheno]}
+    if (is.numeric(expGroup)){
+        pheno[,groupPheno] <- factor(pheno[,groupPheno])
+        expGroup <- levels(pheno[,groupPheno])[expGroup]}
+    if (is.numeric(refGroup)){
+        pheno[,groupPheno] <- factor(pheno[,groupPheno])
+        refGroup <- levels(pheno[,groupPheno])[refGroup]}
+    Inclusion <- rownames(pheno)[pheno[,groupPheno] %in%
+            c(expGroup, refGroup)]
+    expressionMatrix <- expressionMatrix[,Inclusion]
+    pheno <- data.frame(pheno[Inclusion, groupPheno, drop=FALSE])
+    colnames(pheno) <- groupPheno
+    pheno <- droplevels(pheno)
+    ## Convert pheno to 0 and 1 for use the rest of functions
+    store<-rep(0, length(pheno))
+    for (k in seq_len(length(pheno[,groupPheno]))) {
+        if(pheno[,groupPheno][k] %in% expGroup){store[k]=1}
+        if(pheno[,groupPheno][k] %in% refGroup){store[k]=0}}
+    metalObject <- list(mExpres=expressionMatrix, condition=store)
+    return(metalObject)
+}
 
 #Create objectMAEXpath
 .objectExMA.to.objectMApath <- function(objectExMA, geneSets,

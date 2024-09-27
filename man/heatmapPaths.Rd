@@ -119,7 +119,7 @@ Raivo Kolde 2019. pheatmap: Pretty Heatmaps. R package version 1.0.12.
 \url{https://CRAN.R-project.org/package=pheatmap}
 }
 \seealso{
-\code{\link{createObjectMA}}, \code{\link{metaAnalysisDE}}
+\code{\link{createObjectMApath}}, \code{\link{metaAnalysisESpath}}
 }
 \author{
 Juan Antonio Villatoro Garcia,

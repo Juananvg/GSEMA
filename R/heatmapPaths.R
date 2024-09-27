@@ -76,7 +76,7 @@
 #' @author Juan Antonio Villatoro Garcia,
 #' \email{juanantoniovillatorogarcia@@gmail.com}
 #'
-#' @seealso \code{\link{createObjectMA}}, \code{\link{metaAnalysisDE}}
+#' @seealso \code{\link{createObjectMApath}}, \code{\link{metaAnalysisESpath}}
 #'
 #' @references
 #'
