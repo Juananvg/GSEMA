@@ -6,8 +6,10 @@ Authors@R: c(person("Juan Antonio", "Villatoro-García", role = c("aut", "cre"),
 Description: performing the different steps of gene set enrichment meta-analysis. It provides different functions that allow the application of meta-analysis based on the combination of effect sizes from different pathways in different studies to obtain significant pathways that are common to all of them.
 License: GPL-2
 Depends: R (>= 4.3)
-Suggests: BiocStyle, qpdf, BiocGenerics, RUnit
+Suggests: BiocStyle, qpdf, BiocGenerics, RUnit, knitr, rmarkdown
 Imports: Biobase, DExMA, limma, singscore, GSVA, progress, pbapply, doParallel, parallel, BiocParallel, metafor, RColorBrewer, pheatmap, methods, scales, plyr, grDevices, stats, impute
+VignetteBuilder: knitr
+VignetteEngine: knitr::rmarkdown
 biocViews: StatisticalMethod, GeneSetEnrichment, Pathways
 Encoding: UTF-8
 LazyData: false
