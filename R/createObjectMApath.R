@@ -151,6 +151,13 @@ createObjectMApath <- function(listEX, listPheno = NULL,
     pathMethod = c("GSVA", "Zscore", "ssGSEA", "Singscore"), minSize = 7,
     kcdf = "Gaussian", n.cores = 1, internal.n.cores = 1, normalize = TRUE){
     pathMethod <- match.arg(pathMethod)
+    if(Sys.info()["sysname"] == "Windows"){
+        param <- SnowParam(workers = n.cores)
+    }
+    else{
+        param <- MulticoreParam(workers = n.cores)
+    }
+    #GSVA method
     if(pathMethod == "GSVA"){
         print("Applying the GSVA method")
         objectMApath <- bplapply(objectExMA, function(x){
@@ -160,10 +167,11 @@ createObjectMApath <- function(listEX, listPheno = NULL,
             x[[2]] <- x[[2]]
             names(x) <- c("mPath", "condition")
             return(x)},
-            BPPARAM = MulticoreParam(workers = n.cores)
+            BPPARAM = param
         )
         names(objectMApath) <- names(objectExMA)
     }
+    #ssGSEA method
     if(pathMethod == "ssGSEA"){
         print("Applying the ssGSEA method")
         objectMApath <- bplapply(objectExMA, function(x){
@@ -173,10 +181,11 @@ createObjectMApath <- function(listEX, listPheno = NULL,
             x[[2]] <- x[[2]]
             names(x) <- c("mPath", "condition")
             return(x)},
-            BPPARAM = MulticoreParam(workers = n.cores)
+            BPPARAM = param
         )
         names(objectMApath) <- names(objectExMA)
     }
+    #Z-score method
     if(pathMethod == "Zscore"){
         objectMApath <- bplapply(objectExMA, function(x) {
             x[[1]] <- .applyZscore(x[[1]], geneSets = geneSets,
@@ -185,10 +194,11 @@ createObjectMApath <- function(listEX, listPheno = NULL,
             x[[2]] <- x[[2]]
             names(x) <- c("mPath", "condition")
             return(x)},
-            BPPARAM = MulticoreParam(workers = n.cores)
+            BPPARAM = param
         )
         names(objectMApath) <- names(objectExMA)
     }
+    #singscore method
     if(pathMethod == "Singscore"){
         print("Applying the singscore method")
         objectMApath <- bplapply(objectExMA, function(x) {
@@ -197,7 +207,7 @@ createObjectMApath <- function(listEX, listPheno = NULL,
             x[[2]] <- x[[2]]
             names(x) <- c("mPath", "condition")
             return(x)},
-            BPPARAM = MulticoreParam(workers = n.cores)
+            BPPARAM = param
         )
         names(objectMApath) <- names(objectExMA)
     }
@@ -209,9 +219,15 @@ createObjectMApath <- function(listEX, listPheno = NULL,
 #GSVA
 .applyGSVA <- function(exMatrix, geneSets, minSize = 7, kcdf = "Gaussian",
     internal.n.cores = 1, normalize = TRUE){
+    if(Sys.info()["sysname"] == "Windows"){
+        internalparam <- SnowParam(workers = internal.n.cores)
+    }
+    else{
+        internalparam <- MulticoreParam(workers = internal.n.cores)
+    }
     paramMatrix <- gsvaParam(exMatrix, geneSets, minSize = minSize, kcdf = kcdf)
     gsvaMatrix <- gsva(paramMatrix,
-        BPPARAM = MulticoreParam(workers = internal.n.cores))
+        BPPARAM = internalparam)
     #gsvaMatrix normalization
     if(normalize == TRUE){
         gsvaMatrix <- (gsvaMatrix - mean(gsvaMatrix)) / sd(gsvaMatrix)
@@ -221,16 +237,28 @@ createObjectMApath <- function(listEX, listPheno = NULL,
 
 #Zscore
 .applyZscore <- function(exMatrix, geneSets, minSize = 7, internal.n.cores = 1){
+    if(Sys.info()["sysname"] == "Windows"){
+        internalparam <- SnowParam(workers = internal.n.cores)
+    }
+    else{
+        internalparam <- MulticoreParam(workers = internal.n.cores)
+    }
     paramMatrix <- zscoreParam(exMatrix, geneSets, minSize =  minSize)
-    ZscoreMatrix <- gsva(paramMatrix, BPPARAM = MulticoreParam(workers = internal.n.cores))
+    ZscoreMatrix <- gsva(paramMatrix, BPPARAM = internalparam)
     return(ZscoreMatrix)
 }
 
 #ssGSEA
 .applyssGSEA <- function(exMatrix, geneSets, minSize = 7, normalize = TRUE,
     internal.n.cores = 1){
+    if(Sys.info()["sysname"] == "Windows"){
+        internalparam <- SnowParam(workers = internal.n.cores)
+    }
+    else{
+        internalparam <- MulticoreParam(workers = internal.n.cores)
+    }
     paramMatrix <- ssgseaParam(exMatrix, geneSets, minSize =  minSize)
-    ssGSEAMatrix <- gsva(paramMatrix, BPPARAM = MulticoreParam(workers = internal.n.cores))
+    ssGSEAMatrix <- gsva(paramMatrix, BPPARAM = internalparam)
     #ssGSEAMatrix normalization
     if(normalize == TRUE){
         ssGSEAMatrix <- (ssGSEAMatrix - mean(ssGSEAMatrix)) / sd(ssGSEAMatrix)
