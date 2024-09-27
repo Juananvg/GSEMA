@@ -110,7 +110,7 @@
 
 metaAnalysisESpath<-function(objectMApath = NULL, effectS = NULL,
     measure = c("limma", "SMD", "MD"),
-    WithinVarCorrect = TRUE,
+    WithinVarCorrect=TRUE,
     typeMethod=c("FEM", "REM"),
     missAllow=0.3, proportionData = 1){
     typeMethod <- match.arg(typeMethod)

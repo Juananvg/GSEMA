@@ -77,8 +77,8 @@ library(GSEMA)
 data("simulatedData")
 ```
 
-* study1Ex, study2Ex, study3Ex: threee expression matrices.
-* study1Pheno, study2Pheno, study3Pheno: three phenodata objects.
+* study1Ex, study2Ex: two expression matrices.
+* study1Pheno, study2Pheno: two phenodata objects.
 * GeneSets: a list of gene sets with each element are the genes that belong to a pathway.
 * objectMApathSim: the meta-analysis object created from the different expression matrices and phenodatas.
 
@@ -104,14 +104,14 @@ This object can be created directly by the user or we can make use of **createOb
 
 ```{r}
 #List of expression matrices
-listMatrices <- list(study1Ex, study2Ex, study3Ex)
+listMatrices <- list(study1Ex, study2Ex)
 ```
 
 * listPheno: a list of phenodatas (samples in rows and covariables in columns). If the object listEX is a list of ExpressionSets this element can be null.
 
 
 ```{r}
-listPhenodata <- list(study1Pheno, study2Pheno, study3Pheno)
+listPhenodata <- list(study1Pheno, study2Pheno)
 ```
 
 * namePheno: a list or vector of the different column names or column positions from the pheno used for perfoming the comparison between groups. Each element of namePheno correspont to its equivalent element in the listPheno. (default a vector of 1, all the first columns of each elements of listPheno are selected)
@@ -158,8 +158,8 @@ In parallelization, several aspects must be considered. "n.cores" refers to the 
 We all this information we can create the vector for **namePheno** argument and the two list for **expGroups** and **refGroups**:
 
 ```{r}
-listMatrices <- list(study1Ex, study2Ex, study3Ex)
-listPhenodata <- list(study1Pheno, study2Pheno, study3Pheno)
+listMatrices <- list(study1Ex, study2Ex)
+listPhenodata <- list(study1Pheno, study2Pheno)
 phenoGroups <- c("Condition","Condition", "Condition")
 phenoCases <- list("Case", "Case", "Case")
 phenoControls <- list("Healthy", "Healthy", "Healthy")

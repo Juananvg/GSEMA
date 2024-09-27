@@ -4,16 +4,14 @@
 \alias{objectMApathSim}
 \alias{study1Ex}
 \alias{study2Ex}
-\alias{study3Ex}
 \alias{study1Pheno}
 \alias{study2Pheno}
-\alias{study3Pheno}
 \docType{data}
 \title{GSEMA synthetic data}
 \description{
 \itemize{
-    \item study1Ex, study2Ex, study3Ex: three expression matrices.
-    \item study1Pheno, study2Pheno, study3Pheno: three phenodata objects.
+    \item study1Ex, study2Ex: two expression matrices.
+    \item study1Pheno, study2Pheno: two phenodata objects.
     \item GeneSets: a list of gene sets with each element are the genes that
     belong to a pathway.
     \item objectMApathSim: the meta-analysis object created from the different
@@ -22,14 +20,13 @@
 }
 \usage{data(simulatedData)}
 \format{
-    arrays (\code{study1Ex}, \code{study2Ex}, \code{study3Ex}), 
-    data.frames (\code{study1Pheno}, \code{study2Pheno}, \code{study3Pheno}),
+    arrays (\code{study1Ex}, \code{study2Ex}), 
+    data.frames (\code{study1Pheno}, \code{study2Pheno}),
     list vectors (\code{GeneSets}) and list of nested lists
     (\code{objectMApathSim}).
 }
 \source{
-    study1Ex, study2Ex, study3Ex, study1Pheno, study2Pheno,
-    and study3Pheno are synthetic.
+    study1Ex, study2Ex, study1Pheno and study2Pheno are synthetic.
     GeneSets was created from the information of MsigDB  database by adding
     a simulated pathway with simulated genes
 
