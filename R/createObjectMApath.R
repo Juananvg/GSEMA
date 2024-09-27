@@ -220,9 +220,9 @@ createObjectMApath <- function(listEX, listPheno = NULL,
             stop("If DATA is not a ExpressionSet, you must provide
                 pheno parameter")}
     }
-    colnames(expressionMatrix) = as.character(colnames(expressionMatrix))
-    rownames(pheno) = as.character(rownames(pheno))
-    pheno = pheno[colnames(expressionMatrix),,drop=FALSE]
+    colnames(expressionMatrix) <- as.character(colnames(expressionMatrix))
+    rownames(pheno) <- as.character(rownames(pheno))
+    pheno <- pheno[colnames(expressionMatrix),,drop=FALSE]
     if (is.numeric(groupPheno)){
         groupPheno <- colnames(pheno)[groupPheno]}
     if (is.numeric(expGroup)){
