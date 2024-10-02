@@ -222,7 +222,7 @@ In the following example, we have applied a Random Effect model to the *GSEMA* o
 ```{r}
 results <- metaAnalysisESpath(objectMApath = objectMApathSim,
     measure = "limma", typeMethod = "REM", missAllow = 0.3, 
-    proportionData = length(objectMApathSim))
+    numData = length(objectMApathSim))
 ```
 
 The output of this function is a dataframe with the results of the meta-analysis where rows are the genes and columns are the different variables provided by the meta-analysis:
