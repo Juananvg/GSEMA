@@ -173,9 +173,9 @@ metaAnalysisESpath<-function(objectMApath = NULL, effectS = NULL,
             "FDR", "numDatasets")
     }
     meta.res<- subset(meta.res,
-        subset = numDatasets > 1)
+        subset = meta.res[,"numDatasets"] > 1)
     meta.res<- subset(meta.res,
-        subset = numDatasets >= numData)
+        subset = meta.res[,"numDatasets"] >= numData)
     meta.res <- as.data.frame(as.matrix(meta.res))
     meta.res[,1] <- rownames(meta.res)
     attr(meta.res,"metaMethod") <- metaMethod
