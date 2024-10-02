@@ -9,9 +9,9 @@ metaAnalysisESpath(
   effectS = NULL,
   measure = c("limma", "SMD", "MD"),
   WithinVarCorrect = TRUE,
-  typeMethod = c("FEM", "REM"),
+  typeMethod = c("REM", "FEM"),
   missAllow = 0.3,
-  proportionData = 1
+  numData = length(objectMApath)
 )
 }
 \arguments{
@@ -45,9 +45,11 @@ values allowed in a sample. If the sample has more proportion of missing
 values the sample will be eliminated. In the other case the missing values
 will be imputed using the K-NN algorithm.}
 
-\item{proportionData}{The minimum proportion of datasets in which a gene
-must be contained to be included. By default, the gene must be contained
-in at least half of the datasets}
+\item{numData}{The minimum number of datasets in which a gene
+must be contained to be included in the emta-analysis. 
+By default, the gene must be contained in all the datasets. 
+If the number entered exceeds the number of studies, the total number of 
+studies will be considered."}
 }
 \value{
 A dataframe with the meta-analysis results. For more information
@@ -76,7 +78,7 @@ different estimators.
 The meta-analysis methods that can be applied are:
 \enumerate{
  \item "FEM": Fixed Effects model
- \item "REM": Random Effects model
+ \item "REM": Random Effects model (Default).
     }
 }
 \examples{

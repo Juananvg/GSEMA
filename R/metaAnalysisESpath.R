@@ -33,9 +33,11 @@
 #' values the sample will be eliminated. In the other case the missing values
 #' will be imputed using the K-NN algorithm.
 #'
-#' @param proportionData The minimum proportion of datasets in which a gene
-#' must be contained to be included. By default, the gene must be contained
-#' in at least half of the datasets
+#' @param numData The minimum number of datasets in which a gene
+#' must be contained to be included in the emta-analysis. 
+#' By default, the gene must be contained in all the datasets. 
+#' If the number entered exceeds the number of studies, the total number of 
+#' studies will be considered."
 #'
 #'
 #' @details There are different ways to calculate the effect size of a gene set:
@@ -56,7 +58,7 @@
 #' The meta-analysis methods that can be applied are:
 #'\enumerate{
 #'  \item "FEM": Fixed Effects model
-#'  \item "REM": Random Effects model
+#'  \item "REM": Random Effects model (Default).
 #'     }
 #'
 #'
@@ -111,9 +113,12 @@
 metaAnalysisESpath<-function(objectMApath = NULL, effectS = NULL,
     measure = c("limma", "SMD", "MD"),
     WithinVarCorrect=TRUE,
-    typeMethod=c("FEM", "REM"),
-    missAllow=0.3, proportionData = 1){
+    typeMethod=c("REM", "FEM"),
+    missAllow=0.3, numData = length(objectMApath)){
     typeMethod <- match.arg(typeMethod)
+    if(numData > length(objectMApath)){
+        numData <- length(objectMApath)
+    }
     if(typeMethod == "FEM" | typeMethod == "REM"){
         if(!is.null(objectMApath)){
             effectS <- calculateESpath(objectMApath, missAllow = missAllow,
@@ -125,21 +130,19 @@ metaAnalysisESpath<-function(objectMApath = NULL, effectS = NULL,
             names(effectS) <- c("ES", "Var")
         }
         results <- .metaESpath(effectS, metaMethod = typeMethod,
-            proportionData = proportionData)
+            numData = numData)
     }
     return(results)
 }
 
-.metaESpath <- function(calESResults, metaMethod=c("FEM","REM"),
-    proportionData = 1){
+.metaESpath <- function(calESResults, metaMethod=c("REM","FEM"),
+    numData = ncol(calESResults$ES)){
     metaMethod <- match.arg(metaMethod)
     K<-ncol(calESResults$ES)
     if(metaMethod == "REM"){
         print("Performing Random Effects Model")
         res <- .getREMpath(calESResults$ES, calESResults$Var)
-        tempFDR <- matrix(res$FDR, ncol=1)
-        rownames(tempFDR) <- rownames(calESResults$ES)
-        colnames(tempFDR) <- "FDR"
+        tempFDR <- res$FDR
         meta.res <- data.frame(matrix(0, ncol=9,
             nrow = length(rownames(calESResults$ES))))
         rownames(meta.res) <- rownames(calESResults$ES)
@@ -150,15 +153,13 @@ metaAnalysisESpath<-function(objectMApath = NULL, effectS = NULL,
         meta.res[,6] <- res$score
         meta.res[,7] <- res$pval
         meta.res[,8] <- tempFDR
-        meta.res[,9] <- as.matrix(1-rowMeans(is.na(calESResults$ES)))
+        meta.res[,9] <- ncol(calESResults$ES)-rowSums(is.na(calESResults$ES))
         colnames(meta.res) <- c("Pathway", "Com.ES", "ES.var", "Qval",
-            "tau2","Zval", "Pval", "FDR","propDataset")
+            "tau2","Zval", "Pval", "FDR","numDatasets")
     }else{
         print("Performing Fixed Effects Model")
         res <- .getFEM(calESResults$ES,calESResults$Var)
-        tempFDR <- matrix(res$FDR,ncol=1)
-        rownames(tempFDR) <- rownames(calESResults$ES)
-        colnames(tempFDR) <- "FDR"
+        tempFDR <- res$FDR
         meta.res <- data.frame(matrix(0, ncol = 7,
             nrow = nrow(calESResults$ES)))
         rownames(meta.res) <- rownames(calESResults$ES)
@@ -166,16 +167,15 @@ metaAnalysisESpath<-function(objectMApath = NULL, effectS = NULL,
         meta.res[,3] <- res$mu.var
         meta.res[,4] <- res$zval
         meta.res[,5] <- res$pval
-        meta.res[,6] <- tempFDR[,1]
-        meta.res[,7] <- as.matrix(1-rowMeans(is.na(calESResults$ES)))
+        meta.res[,6] <- tempFDR
+        meta.res[,7] <- ncol(calESResults$ES)-rowSums(is.na(calESResults$ES))
         colnames(meta.res) <- c("Pathway", "Com.ES", "ES.var", "Zval", "Pval",
-            "FDR", "propDataset")
+            "FDR", "numDatasets")
     }
     meta.res<- subset(meta.res,
-        subset = meta.res[,"propDataset"] > 1/
-            ncol(calESResults$ES))
+        subset = numDatasets > 1)
     meta.res<- subset(meta.res,
-        subset = meta.res[,"propDataset"] >= proportionData)
+        subset = numDatasets >= numData)
     meta.res <- as.data.frame(as.matrix(meta.res))
     meta.res[,1] <- rownames(meta.res)
     attr(meta.res,"metaMethod") <- metaMethod

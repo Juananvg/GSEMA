@@ -214,14 +214,15 @@ This function has as input:
     + "FEM": Fixed Effects model.
     + "REM": Random Effects model.
 * missAllow: a number between 0 and 1 that indicates the maximum proportion of missing values allows in a sample. If the sample has more proportion of missing values, the sample will be eliminated. In the other case, the missing values will be imputed by using the K-NN algorithm included in **impute** package (@Impute_2019). In case the **objectMA** has been previously imputed, this element is not necessary.
-* proportionData: a number between 0 and 1 that indicates the minimum proportion of datasets in which a pathway must be contained to be included.
+* numData: a number between 0 and 1 that indicates the minimum number of datasets in which a pathway must be contained to be included.
 
 
 In the following example, we have applied a Random Effect model to the *GSEMA* object ("objectMApathSim") we have been working with so far. In addition we have applied the "limma" method to calculate the effect size. Finally, we have allowed a 0.3 proportion of missing values in a sample and a gene set must have been contained in all studies:
 
 ```{r}
 results <- metaAnalysisESpath(objectMApath = objectMApathSim,
-    measure = "limma", typeMethod = "REM", missAllow = 0.3, proportionData = 1)
+    measure = "limma", typeMethod = "REM", missAllow = 0.3, 
+    proportionData = length(objectMApathSim))
 ```
 
 The output of this function is a dataframe with the results of the meta-analysis where rows are the genes and columns are the different variables provided by the meta-analysis:
@@ -243,7 +244,7 @@ The results are provided in a dataframe with the variables:
 * zval: combined effect value for a standard normal. I can be use in order to find out if the gene set is overexpressed (positive value) or underexpressed (negative value).
 * Pval: P-value of the meta-analysis for the gene set.
 * FDR: P-value adjusted of the meta-analysis for the gene set.
-* propDataset: Proportion of the datasets in which the gene is included.
+* numDataset: Number of the datasets in which the gene set is included.
 
 ## Visualization of the results: heatmap
 
