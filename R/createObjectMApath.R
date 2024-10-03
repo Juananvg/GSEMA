@@ -287,6 +287,7 @@ createObjectMApath <- function(listEX, listPheno = NULL,
     }
     #Z-score method
     if(pathMethod == "Zscore"){
+        print("Applying the Zscore method")
         objectMApath <- bplapply(objectExMA, function(x) {
             x[[1]] <- .applyZscore(x[[1]], geneSets = geneSets,
                 minSize = minSize,
@@ -327,7 +328,7 @@ createObjectMApath <- function(listEX, listPheno = NULL,
     }
     paramMatrix <- gsvaParam(exMatrix, geneSets, minSize = minSize, kcdf = kcdf)
     gsvaMatrix <- gsva(paramMatrix,
-        BPPARAM = internalparam)
+        BPPARAM = internalparam, verbose = FALSE)
     #gsvaMatrix normalization
     if(normalize == TRUE){
         gsvaMatrix <- (gsvaMatrix - mean(gsvaMatrix)) / sd(gsvaMatrix)
@@ -344,7 +345,7 @@ createObjectMApath <- function(listEX, listPheno = NULL,
         internalparam <- MulticoreParam(workers = internal.n.cores)
     }
     paramMatrix <- zscoreParam(exMatrix, geneSets, minSize =  minSize)
-    ZscoreMatrix <- gsva(paramMatrix, BPPARAM = internalparam)
+    ZscoreMatrix <- gsva(paramMatrix, BPPARAM = internalparam, verbose = FALSE)
     return(ZscoreMatrix)
 }
 
@@ -358,7 +359,7 @@ createObjectMApath <- function(listEX, listPheno = NULL,
         internalparam <- MulticoreParam(workers = internal.n.cores)
     }
     paramMatrix <- ssgseaParam(exMatrix, geneSets, minSize =  minSize)
-    ssGSEAMatrix <- gsva(paramMatrix, BPPARAM = internalparam)
+    ssGSEAMatrix <- gsva(paramMatrix, BPPARAM = internalparam, verbose = FALSE)
     #ssGSEAMatrix normalization
     if(normalize == TRUE){
         ssGSEAMatrix <- (ssGSEAMatrix - mean(ssGSEAMatrix)) / sd(ssGSEAMatrix)
@@ -381,12 +382,9 @@ createObjectMApath <- function(listEX, listPheno = NULL,
     pathways_filtered <- pathways_filtered[!sapply(pathways_filtered, is.null)]
     geneSets <- pathways_filtered
     rankMatrix <- rankGenes(exMatrix, tiesMethod = "average")
-    op <- pboptions()
-    pboptions(type = "txt", style = 3, char = "=")
     print("Estimating singscore values")
-    listSign <- suppressWarnings(pblapply(geneSets,
-        function(x) simpleScore(rankData = rankMatrix, upSet = x)))
-    pboptions(op)
+    listSign <- suppressWarnings(lapply(geneSets,
+            function(x) simpleScore(rankData = rankMatrix, upSet = x)))
     listScores <- sapply(listSign, function(x) x$TotalScore)
     if(is.list(listScores)){
         pathMatrix <- do.call(rbind, listScores)}
