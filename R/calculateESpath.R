@@ -70,11 +70,11 @@
 #'
 #' Hedges, L. V. (1981). Distribution theory for Glass's estimator of effect
 #' size and related estimators. Journal of Educational Statistics, 6(2),
-#' 107–128. \url{https://doi.org/10.2307/11645887}
+#' 107–128. \doi{doi:10.2307/1164588}
 #'
 #' Lin L, Aloe AM (2021). Evaluation of various estimators for standardized mean
 #' difference in meta-analysis. Stat Med. 2021 Jan 30;40(2):403-426.
-#' \url{https://doi.org/10.1002/sim.87811}
+#' \doi{10.1002/sim.8781}
 #' 
 #' Rosenthal, R., & Rosnow, R. L. (2008). Essentials of behavioral research:
 #' Methods and data analysis. McGraw-Hill.

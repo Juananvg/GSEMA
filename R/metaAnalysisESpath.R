@@ -73,7 +73,7 @@
 #' Carmona-Sáez P. (2020).
 #' A survey of gene expression meta-analysis: methods and applications,
 #' Briefings in Bioinformatics, bbaa019,
-#' \url{https://doi.org/10.1093/bib/bbaa019}
+#' \doi{10.1093/bib/bbaa019}
 #'
 #' Borenstein, M. (2009). Effect sizes for continuous data. In H. Cooper,
 #' L. V. Hedges, & J. C. Valentine (Eds.),
@@ -82,15 +82,15 @@
 #'
 #' Hedges, L. V. (1981). Distribution theory for Glass's estimator of effect
 #' size and related estimators. Journal of Educational Statistics, 6(2),
-#' 107–128. \url{https://doi.org/10.2307/11645887}
+#' 107–128. \doi{10.2307/1164588}
 #'
 #' Lin L, Aloe AM (2021). Evaluation of various estimators for standardized mean
 #' difference in meta-analysis. Stat Med. 2021 Jan 30;40(2):403-426.
-#' \url{https://doi.org/10.1002/sim.87811}
+#' \doi{10.1002/sim.8781}
 #'
 #' Marot, G., Foulley, J. L., Mayer, C. D., & Jaffrézic, F. (2009).
 #' Moderated effect size and P-value combinations for microarray meta-analyses.
-#' Bioinformatics. 2692-2699. \url{https://doi:10.1093/bioinformatics/btp444}
+#' Bioinformatics. 2692-2699. \doi{10.1093/bioinformatics/btp444}
 #' 
 #' Rosenthal, R., & Rosnow, R. L. (2008). Essentials of behavioral research:
 #' Methods and data analysis. McGraw-Hill.

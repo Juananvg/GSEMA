@@ -14,7 +14,7 @@ the state of the different samples of the Gene Sets matrix.
 0 represents one group (controls) and 1 represents the other group (cases).}
 
 \item{threshold}{A number that indicates the threshold to eliminate a gene
-set. For a eliminqte a gene set is neccessary that the median for both groups
+set. For a eliminate a gene set is necessary that the median for both groups
 are less than the threshold
 If  threshold = "sd" the threshold will be the standard deviation of the
 gene set. The default value is 0.65.}
