@@ -205,7 +205,7 @@ heatmapPaths <- function(
 
 #rscale function
 .rscale <- function(objectMApath, sig.paths, exp.ALL){
-    print("scaling using rescale function...")
+    message("scaling using rescale function...")
     for(set in seq_len(length(objectMApath))){
         temp<-objectMApath[[set]][[1]][intersect(sig.paths,
             rownames(
@@ -227,7 +227,7 @@ heatmapPaths <- function(
 
 #scaling zscor function
 .zscor <- function(objectMApath, sig.paths, exp.ALL){
-    print("scaling using z-score...")
+    message("scaling using z-score...")
     for(set in seq_len(length(objectMApath))){
         temp<-objectMApath[[set]][[1]][intersect(
             sig.paths,
@@ -262,7 +262,7 @@ heatmapPaths <- function(
         another method")
     }
     else{
-        print("scaling with reference...")
+        message("scaling with reference...")
         refH<-objectMApath[[ref]][[1]][intersect(sig.paths,
             rownames(objectMApath[[ref]][[1]])),
             objectMApath[[ref]][[2]]==0]

@@ -182,7 +182,6 @@ calculateESpath <- function(objectMApath, measure = c("limma", "SMD", "MD"),
             k<-nrow(objectMA[[j]][[1]])
             rnum<-which(apply(objectMA[[j]][[1]],2,
                 function(y) sum(is.na(y))/k)<missAllow)
-            print(length(rnum))
             if(length(rnum)>1){
                 objectMA[[j]][[1]][,rnum]<-impute.knn(
                     objectMA[[j]][[1]][,rnum],

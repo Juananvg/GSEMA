@@ -140,7 +140,7 @@ metaAnalysisESpath<-function(objectMApath = NULL, effectS = NULL,
     metaMethod <- match.arg(metaMethod)
     K<-ncol(calESResults$ES)
     if(metaMethod == "REM"){
-        print("Performing Random Effects Model")
+        message("Performing Random Effects Model")
         res <- .getREMpath(calESResults$ES, calESResults$Var)
         tempFDR <- res$FDR
         meta.res <- data.frame(matrix(0, ncol=9,
@@ -157,7 +157,7 @@ metaAnalysisESpath<-function(objectMApath = NULL, effectS = NULL,
         colnames(meta.res) <- c("Pathway", "Com.ES", "ES.var", "Qval",
             "tau2","Zval", "Pval", "FDR","numDatasets")
     }else{
-        print("Performing Fixed Effects Model")
+        message("Performing Fixed Effects Model")
         res <- .getFEM(calESResults$ES,calESResults$Var)
         tempFDR <- res$FDR
         meta.res <- data.frame(matrix(0, ncol = 7,

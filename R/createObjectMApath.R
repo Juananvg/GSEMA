@@ -259,7 +259,7 @@ createObjectMApath <- function(listEX, listPheno = NULL,
     }
     #GSVA method
     if(pathMethod == "GSVA"){
-        print("Applying the GSVA method")
+        message("Applying the GSVA method")
         objectMApath <- bplapply(objectExMA, function(x){
             x[[1]] <- .applyGSVA(x[[1]], geneSets = geneSets,
                 minSize = minSize, kcdf = kcdf, normalize = normalize,
@@ -273,7 +273,7 @@ createObjectMApath <- function(listEX, listPheno = NULL,
     }
     #ssGSEA method
     if(pathMethod == "ssGSEA"){
-        print("Applying the ssGSEA method")
+        message("Applying the ssGSEA method")
         objectMApath <- bplapply(objectExMA, function(x){
             x[[1]] <- .applyssGSEA(x[[1]], geneSets = geneSets,
                 minSize = minSize, normalize = normalize,
@@ -287,7 +287,7 @@ createObjectMApath <- function(listEX, listPheno = NULL,
     }
     #Z-score method
     if(pathMethod == "Zscore"){
-        print("Applying the Zscore method")
+        message("Applying the Zscore method")
         objectMApath <- bplapply(objectExMA, function(x) {
             x[[1]] <- .applyZscore(x[[1]], geneSets = geneSets,
                 minSize = minSize,
@@ -301,7 +301,7 @@ createObjectMApath <- function(listEX, listPheno = NULL,
     }
     #singscore method
     if(pathMethod == "Singscore"){
-        print("Applying the singscore method")
+        message("Applying the singscore method")
         objectMApath <- bplapply(objectExMA, function(x) {
             x[[1]] <- .applySingscore(x[[1]], geneSets = geneSets,
                 normalize = normalize, minSize = minSize)
@@ -382,7 +382,7 @@ createObjectMApath <- function(listEX, listPheno = NULL,
     pathways_filtered <- pathways_filtered[!sapply(pathways_filtered, is.null)]
     geneSets <- pathways_filtered
     rankMatrix <- rankGenes(exMatrix, tiesMethod = "average")
-    print("Estimating singscore values")
+    message("Estimating singscore values")
     listSign <- suppressWarnings(lapply(geneSets,
             function(x) simpleScore(rankData = rankMatrix, upSet = x)))
     listScores <- sapply(listSign, function(x) x$TotalScore)
